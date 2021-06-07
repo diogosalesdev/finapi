@@ -29,10 +29,16 @@ app.post('/account', (request, response) => {
   return response.status(201).send()
 })
 
-app.get('/statment/:cpf', (request, response) => {
-  const { cpf } = request.params
+app.get('/statment', (request, response) => {
+  const { cpf } = request.headers
 
   const customer = customers.find(customer => customer.cpf === cpf)
+
+  if (!customer) {
+    return response.status(400).json({
+      error: 'Customer not found!'
+    })
+  }
 
   return response.status(200).json(customer.statment)
 })
