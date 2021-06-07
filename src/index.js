@@ -9,16 +9,32 @@ const customers = []
 
 app.post('/account', (request, response) => {
   const { cpf, name } = request.body
-  const id = uuidv4()
+  const customersAlreadyExists = customers.some(
+    (customer) => customer.cpf === cpf
+  )
+
+  if (customersAlreadyExists) {
+    return response.status(400).json({
+      error: 'Customer already exists!'
+    })
+  }
 
   customers.push({
     cpf,
     name,
-    id,
+    id: uuidv4(),
     statment: []
   })
 
   return response.status(201).send()
+})
+
+app.get('/statment/:cpf', (request, response) => {
+  const { cpf } = request.params
+
+  const customer = customers.find(customer => customer.cpf === cpf)
+
+  return response.status(200).json(customer.statment)
 })
 
 app.listen(3333)
